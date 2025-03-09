@@ -1,14 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useRef, useState } from "react";
 
 const App = () => {
-  const cells = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const [boardOrder, setBoardOrder] = useState(3);
+  const [cells, setCells] = useState([...Array(boardOrder * boardOrder).keys()]);
+  console.log(`TOP CELLS: ${cells}`);
+
+  // const cells = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   const [currSymbol, setCurrSymbol] = useState('X');
   const [isClickDisabled, setIsClickDisabled] = useState(false);
 
 
+  // const cellRef = useRef([]);
+  // const markedCellsRef = useRef([]);
+
+
   const cellRef = useRef(cells.map(() => React.createRef(null)));
   const markedCellsRef = useRef(cells.map(() => React.createRef(null)));
+
+
+  
+
   const filledCells = useRef(0);
 
   const checkRows = (currRow, symbol) => {
@@ -115,8 +127,8 @@ const App = () => {
 
   const findWinner = (currIndex, winningSymbol) => {
     console.log("winningSymbol: ", winningSymbol);
-    const currRow = Math.floor(currIndex / 3);
-    const currCol = currIndex % 3;
+    const currRow = Math.floor(currIndex / boardOrder);
+    const currCol = currIndex % boardOrder;
     console.log("Current Row: ", currRow, " Current Column: ", currCol);
     if (checkRows(currRow, winningSymbol) || checkCols(currCol, winningSymbol) || ((currRow === currCol || (currRow === 0 && currCol === 2) || (currRow === 2 && currCol === 0)) && checkDiagonals(winningSymbol))) {
       console.log(`Winner is ${winningSymbol}`);
@@ -172,20 +184,62 @@ const App = () => {
     }
   }
 
+  // useEffect(() => {
+  //   console.log(boardOrder);
+  // }, [boardOrder])
+
   return (
     <>
       <main className="flex h-[100vh] w-[100vw] flex-row justify-center items-center">
         <section className="flex flex-col justify-evenly items-center h-[100%] w-[100%]">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center w-full">
             <h1 className="text-6xl ">Tic-Tac-Toe</h1>
+            <div className="flex flex-row items-center justify-center w-full h-fit">
+              <label>Choose the order of the board:
+                <select name="selectOrder" value={boardOrder.toString()} onChange={(e) => {
+                  console.log(e.target.value);
+                  setBoardOrder(JSON.parse(e.target.value)); setCells([...Array(JSON.parse(e.target.value)*JSON.parse(e.target.value)).keys()]); console.log(cells);
+                }}>
+                  <option value="3">3X3</option>
+                  <option value="4">4X4</option>
+                  <option value="5">5X5</option>
+                </select>
+              </label>
+            </div>
           </div>
-          <div className=" lg:w-1/3 w-1/2 aspect-square border border-white grid grid-cols-3 grid-rows-3">
+          {boardOrder === 3 && <div className={`lg:w-1/3 w-1/2 aspect-square border border-white grid grid-cols-3 grid-rows-3`}>
+            {/* {console.log(`cells value: ${cells}`)} */}
             {cells.map((cell, index) =>
-              <div key={index} className="h-[100%] cursor-pointer w-[100%]  border border-white contain-size cell" >
-                <span ref={cellRef.current[index]} onClick={e => isClickDisabled ? false : handleClick(e, index)} className='h-[100%] w-[100%] cellContent flex justify-center items-center hover:text-gray-400' onMouseEnter={e => { e.preventDefault(); if (!markedCellsRef.current[index].current) { cellRef.current[index].current.innerText = currSymbol; } }} onMouseOut={e => { e.preventDefault(); handleMouseLeave(index) }}></span>
+              <div key={index} className={`h-[1/${boardOrder}] aspect-square cursor-pointer border border-white contain-size cell`} >
+                <span ref={cellRef.current[index]} onClick={e => isClickDisabled ? false : handleClick(e, index)} className='h-[100%] w-[100%] cellContent flex justify-center items-center hover:text-gray-400' onMouseEnter={e => {
+                  e.preventDefault(); console.log("CELLS AFTER UPDATE: ", cells);
+                  if (!markedCellsRef.current[index].current) { cellRef.current[index].current.innerText = currSymbol; }
+                }} onMouseOut={e => { e.preventDefault(); handleMouseLeave(index) }}></span>
               </div>
             )}
-          </div>
+          </div>}
+          {boardOrder === 4 && <div className={`lg:w-1/3 w-1/2 aspect-square border border-white grid grid-cols-4 grid-rows-4`}>
+            {/* {console.log(`cells value: ${cells}`)} */}
+            {cells.map((cell, index) =>
+              <div key={index} className={`h-[1/${boardOrder}] aspect-square cursor-pointer border border-white contain-size cell`} >
+                <span ref={cellRef.current[index]} onClick={e => isClickDisabled ? false : handleClick(e, index)} className='h-[100%] w-[100%] cellContent flex justify-center items-center hover:text-gray-400' onMouseEnter={e => {
+                  e.preventDefault(); console.log("CELLS AFTER UPDATE: ", cells);
+                  if (!markedCellsRef.current[index].current) { cellRef.current[index].current.innerText = currSymbol; }
+                }} onMouseOut={e => { e.preventDefault(); handleMouseLeave(index) }}></span>
+              </div>
+            )}
+          </div>}
+          {boardOrder === 5 && <div className={`lg:w-1/3 w-1/2 aspect-square border border-white grid grid-cols-5 grid-rows-5`}>
+            {/* {console.log(`cells value: ${cells}`)} */}
+            {cells.map((cell, index) =>
+              <div key={index} className={`h-[1/${boardOrder}] aspect-square cursor-pointer border border-white contain-size cell`} >
+                <span ref={cellRef.current[index]} onClick={e => isClickDisabled ? false : handleClick(e, index)} className='h-[100%] w-[100%] cellContent flex justify-center items-center hover:text-gray-400' onMouseEnter={e => {
+                  e.preventDefault(); console.log("CELLS AFTER UPDATE: ", cells);
+                  if (!markedCellsRef.current[index].current) { cellRef.current[index].current.innerText = currSymbol; }
+                }} onMouseOut={e => { e.preventDefault(); handleMouseLeave(index) }}></span>
+              </div>
+            )}
+          </div>}
           <div className="h-1/20 w-1/2 flex flex-row justify-center items-center">
             <button onClick={handleClear} className="cursor-pointer font-bold text-xl border  border-gray-600 px-4 py-1 transition-all ease-in-out rounded-md hover:bg-gray-400 hover:scale-102 active:bg-gray-500">Clear</button>
           </div>
